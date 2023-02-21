@@ -42,25 +42,25 @@ const payer = createKeypairFromFile(homedir() + '/dogeswap-keypair/id.json')
 
 console.log(payer.publicKey.toBase58())
 
-// const [lookupTableInst, lookupTableAddress] = AddressLookupTableProgram.createLookupTable({
-// 	authority: payer.publicKey,
-// 	payer: payer.publicKey,
-// 	recentSlot: slot,
-// })
+const [lookupTableInst, lookupTableAddress] = AddressLookupTableProgram.createLookupTable({
+	authority: payer.publicKey,
+	payer: payer.publicKey,
+	recentSlot: slot,
+})
 
 // console.log('lookup table address:', lookupTableAddress.toBase58())
 
 let addresses = [
 	// elixir 9
-	// 'Sysvar1nstructions1111111111111111111111111',
-	// 'ComputeBudget111111111111111111111111111111',
-	// 'AzAadD76oXaMk1b6fdGk6poVSEj1zpirgvk7gaBVqo3L',
-	// 'GbAkQxNqU4pBQbciqPssb9fJ41W4sw8gEydLbfAUcoJ6',
-	// 'BEgL1UXJgNT1oJx25usxW5wDDUaBM1N1UCCLZXfU1o3G',
-	// '9rAmFoAkcVYw4GBAdk3oobPDsM3ugfH8HETuPn9iEYsC',
-	// 'A6bixUiWZVQvg4odnWkXfPxoyVhhqn1kGdc8fRU1brXN',
-	// '3zXeaxfj5sEQ1ywxtMutqTA7WaEkFbZa26r9bzTvsSvW',
-	// '49tfqB49v34F6oyQZhuBTwunPGpTPi6UdCP8CziTJxFH',
+	'Sysvar1nstructions1111111111111111111111111',
+	'ComputeBudget111111111111111111111111111111',
+	'AzAadD76oXaMk1b6fdGk6poVSEj1zpirgvk7gaBVqo3L',
+	'GbAkQxNqU4pBQbciqPssb9fJ41W4sw8gEydLbfAUcoJ6',
+	'BEgL1UXJgNT1oJx25usxW5wDDUaBM1N1UCCLZXfU1o3G',
+	'9rAmFoAkcVYw4GBAdk3oobPDsM3ugfH8HETuPn9iEYsC',
+	'A6bixUiWZVQvg4odnWkXfPxoyVhhqn1kGdc8fRU1brXN',
+	'3zXeaxfj5sEQ1ywxtMutqTA7WaEkFbZa26r9bzTvsSvW',
+	'49tfqB49v34F6oyQZhuBTwunPGpTPi6UdCP8CziTJxFH',
 	// raydium 13
 	// '7fw8CPubr823mkEEXhTJeUP4vUNqGykEAWeGdc5Dgndg',
 	// 'Gm8ewRpGBDmhTySsnWm4HTkmYrVK1kYoC4epzTevj7zi',
@@ -115,18 +115,6 @@ let addresses = [
 	// '8EwiMvGgi78R4ceCg4QTtBxZ4eeW2bLeBdFFcVrjG5EW',
 ]
 
-// let lookupTableAccount = await connection
-// 	.getAddressLookupTable(new PublicKey('14SU2WQHMXzjZFtxUpt4hnonYz7DbywWnWuHc6h3fL8U'))
-// 	.then((res) => res.value)
-
-// addresses.concat(lookupTableAccount.state.addresses.map((acc) => acc.toBase58()))
-
-// lookupTableAccount = await connection
-// 	.getAddressLookupTable(new PublicKey('4oA28x6ZA1sNPvXLWLG7aNcoPoNj4a6F3QYPyTS2HvYE'))
-// 	.then((res) => res.value)
-
-// addresses.concat(lookupTableAccount.state.addresses.map((acc) => acc.toBase58()))
-
 let lookupTableAccount = await connection
 	.getAddressLookupTable(new PublicKey('9uW4RxpXv1hxGZA9nznnUkb3BW3NeECghF7VnXGwdZBg'))
 	.then((res) => res.value)
@@ -138,17 +126,18 @@ const extendInstruction = AddressLookupTableProgram.extendLookupTable({
 	addresses: addresses.map((acc) => new PublicKey(acc)),
 })
 
-// const deactivateInstruction = AddressLookupTableProgram.deactivateLookupTable({
-// 	lookupTable: new PublicKey('9oNDFSLwMJKd4GcXMwDKkrt5bg5nqQzUJTRkn8F8zqfN'),
-// 	authority: payer.publicKey,
-// })
-// const closeInstruction = AddressLookupTableProgram.closeLookupTable({
-// 	lookupTable: new PublicKey('9oNDFSLwMJKd4GcXMwDKkrt5bg5nqQzUJTRkn8F8zqfN'),
-// 	authority: payer.publicKey,
-// 	recipient: payer.publicKey,
-// })
+const deactivateInstruction = AddressLookupTableProgram.deactivateLookupTable({
+	lookupTable: new PublicKey('9oNDFSLwMJKd4GcXMwDKkrt5bg5nqQzUJTRkn8F8zqfN'),
+	authority: payer.publicKey,
+})
 
-await sendTransactionV0(connection, [extendInstruction], payer)
+const closeInstruction = AddressLookupTableProgram.closeLookupTable({
+	lookupTable: new PublicKey('9oNDFSLwMJKd4GcXMwDKkrt5bg5nqQzUJTRkn8F8zqfN'),
+	authority: payer.publicKey,
+	recipient: payer.publicKey,
+})
+
+await sendTransactionV0(connection, [lookupTableInst, extendInstruction], payer)
 
 // console.log('Table address from cluster:', lookupTableAccount.key.toBase58())
 
