@@ -122,7 +122,7 @@ let lookupTableAccount = await connection
 const extendInstruction = AddressLookupTableProgram.extendLookupTable({
 	payer: payer.publicKey,
 	authority: payer.publicKey,
-	lookupTable: lookupTableAccount.key,
+	lookupTable: lookupTableAddress,
 	addresses: addresses.map((acc) => new PublicKey(acc)),
 })
 
